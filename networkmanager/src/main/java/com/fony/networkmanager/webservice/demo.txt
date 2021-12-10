@@ -1,0 +1,139 @@
+    public void reqTypeDis() {
+        setIsLoading(true);
+        RequestAction requestAction = new RequestAction();
+        requestAction.serviceName = Const.getLst;
+        String sql = "select  xuH,daiM,mingCh,type_dis from slct where type = 'PDA外检照片全显示' order by xuH";
+        requestAction.putParam("sql", sql);
+        WebServiceAsyncHelp.getInstance().getWebServiceBaseHelp().executeRequest(requestAction, new TypeDisParseHandler(), ((help, parseObj) -> {
+            setIsLoading(false);
+            if (parseObj instanceof TypeDisResponse) {
+                TypeDisResponse typeDisResponse = (TypeDisResponse) parseObj;
+                typeDisResponseMutableLiveData.postValue(typeDisResponse);
+            }
+            setSyncPositionValue(1);
+        }), new WebServiceBaseHelp.RequestListener() {
+            @Override
+            public void onSuccess(Response response) {
+
+            }
+
+            @Override
+            public void onFail(Exception e) {
+                setSyncPositionValue(1);
+                setIsLoading(false);
+            }
+
+            @Override
+            public void onNullSucess() {
+                setSyncPositionValue(1);
+                setIsLoading(false);
+            }
+        }, BaseRequest.RequestType.WEBSERVICE);
+    }
+
+
+
+     /********************start**********************/
+    public class TypeDisResponse implements Parcelable {
+        public String type_dis;
+
+        public static final Creator<TypeDisResponse> CREATOR = new Creator<TypeDisResponse>() {
+            public TypeDisResponse createFromParcel(Parcel source) {
+                TypeDisResponse field = new TypeDisResponse();
+                field.type_dis = source.readString();
+
+                return field;
+            }
+
+            public TypeDisResponse[] newArray(int size) {
+                return new TypeDisResponse[size];
+            }
+        };
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel parcel, int flags) {
+            parcel.writeString(type_dis);
+
+        }
+
+        @Override
+        public String toString() {
+            return "BasicResponse [result=" + type_dis + ", message="+"]";
+        }
+    }
+         /********************end**********************/
+         /********************start*********************/
+         public class TypeDisParseHandler extends BaseParserHandler {
+             private StringBuilder builder;
+             private TypeDisResponse response;
+
+
+             public void characters(char[] ch, int start, int length)
+                     throws SAXException {
+                 super.characters(ch, start, length);
+                 builder.append(ch, start, length);
+             }
+
+             @Override
+             public void endElement(String uri, String localName, String name)
+                     throws SAXException {
+                 super.endElement(uri, localName, name);
+                 if ("type_dis".equalsIgnoreCase(localName)) {
+                     response.type_dis = trim(builder.toString());
+                 }
+                 builder.setLength(0);
+             }
+
+             public String subZeroAndDot(String s) {
+                 if (s.indexOf(".") > 0) {
+                     s = s.replaceAll("0+?$", "");//去掉多余的0
+                     s = s.replaceAll("[.]$", "");//如最后一位是.则去掉
+                 }
+                 return s;
+             }
+
+             @Override
+             public void startDocument() throws SAXException {
+                 super.startDocument();
+                 builder = new StringBuilder();
+
+             }
+
+             @Override
+             public void startElement(String uri, String localName, String name,
+                                      Attributes attributes) throws SAXException {
+                 super.startElement(uri, localName, name, attributes);
+
+                 if("result".equalsIgnoreCase(localName)){
+                     response=new TypeDisResponse();
+                 }else if ("id".equalsIgnoreCase(localName)) {
+
+                 }
+             }
+
+
+
+             @Override
+             public void endDocument() throws SAXException {
+                 super.endDocument();
+             }
+
+             private String trim(String strToTrim) {
+                 if (null == strToTrim) {
+                     return null;
+                 }
+                 return strToTrim.trim();
+             }
+
+             @Override
+             public Object getParseContent() {
+                 return response;
+             }
+         }
+
+         /********************end*********************/

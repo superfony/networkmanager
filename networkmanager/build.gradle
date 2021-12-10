@@ -1,0 +1,103 @@
+//plugins {
+//    id 'com.android.application'
+//}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 31
+    buildToolsVersion "30.0.3"
+
+    defaultConfig {
+     //   applicationId "com.fony.networkmanager"
+        minSdkVersion 21
+        targetSdkVersion 31
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation files('libs/ksoap2-android-assembly-2.5.2-jar-with-dependencies.jar')
+//    implementation files('libs/ksoap2-android-assembly-3.0.0-RC.4-jar-with-dependencies.jar')
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+}
+
+
+
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+signing {
+    required { gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+}
+
+group = "com.qigaosoft"
+archivesBaseName = "networkmanager"
+version = "1.0"
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment {
+                MavenDeployment deployment -> signing.signPom(deployment)
+            }
+
+            repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: 'fony', password: 'fony2021')
+            }
+            snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: 'fony', password: 'fony2021')
+            }
+
+            pom.project {
+                name 'networkmanager'
+                packaging 'aar'
+                description 'This is a view that is similar to the CardView of google ，but it can change the position of shadow and the shadow color of it . '
+                url 'https://gitee.com/qigaosoft/superfony'
+
+                scm {
+                    connection 'scm:git:https://gitee.com/qigaosoft/superfony.git'
+                    developerConnection 'scm:git:https://gitee.com/qigaosoft/superfony.git'
+                    url 'https://gitee.com/qigaosoft/superfony.git'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id '7536'
+                        name 'fony'
+                        email 'fony2011@163.com'
+                    }
+                }
+            }
+        }
+    }
+}

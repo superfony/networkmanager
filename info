@@ -1,0 +1,44 @@
+1、安装 gpg
+brew install gpg
+3、生成公钥对, 根据提示操作，输入密码的时候注意别忘了  有效期默认一年
+gpg --gen-key
+
+4  查看生成的秘钥对
+gpg --list-keys
+
+5、导出私钥,会在你当前目录生成一个secring.gpg
+gpg --export-secret-keys -o secring.gpg
+
+6、同步公钥到公网, 别人需要用公钥去验证是你的签名，注意 0EC4B75E 为上面公钥后八位
+gpg --keyserver hkp://keyserver.ubuntu.com --send-keys 0EC4B75E
+7、查看私钥
+gpg --list-secret-keys
+
+8、要求先删除私钥，再删除公钥，删除私钥的过程会多次确认。
+
+# gpg --delete-secret-keys 086A83E4920E558197652B55CEB674AF2FF7EB12
+
+# gpg --delete-keys 086A83E4920E558197652B55CEB674AF2FF7EB12
+
+9、gpg上传公钥的命令是
+
+gpg --keyserver hkp://keyserver.ubuntu.com:11371 --send-keys yourkeyid
+
+
+
+配置gradle.properties
+//公钥对后八位
+signing.keyId = 0EC4B75E
+//公钥对密码
+signing.password = ****
+//导出私钥的 secring.gpg
+signing.secretKeyRingFile = /Users/xiaosong
+
+ossrhUsername=your-jira-id
+ossrhPassword=your-jira-password
+
+
+
+https://github.com/superfony/networkmanager.git
+git@github.com:superfony/networkmanager.git
+
